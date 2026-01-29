@@ -9,38 +9,27 @@ document.addEventListener("DOMContentLoaded", () => {
   function calculate(){
     error.textContent = "";
 
-    const raw = input.value.replace(/\D/g, ""); // оставляем только цифры
+    const v = input.value.trim();
+    const m = v.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
 
-    if (raw.length !== 8){
-      error.textContent = "Введите дату: ДДММГГГГ или ДД.ММ.ГГГГ";
+    if(!m){
+      error.textContent = "Формат даты: ДД.ММ.ГГГГ";
       result.classList.add("hidden");
       return;
     }
 
-    const day   = parseInt(raw.slice(0,2),10); // 01 → 1
-    const month = parseInt(raw.slice(2,4),10);
-    const year  = parseInt(raw.slice(4,8),10);
+    const day = parseInt(m[1],10); // 01 → 1
+    const digits = m[1] + m[2] + m[3];
 
-    if (day < 1 || day > 31 || month < 1 || month > 12){
-      error.textContent = "Некорректная дата";
-      result.classList.add("hidden");
-      return;
-    }
-
-    const digits = raw;
-
-    // === ТЕТРАДНЫЙ РАСЧЁТ ===
     const S1 = sum(digits);
     const S2 = sum(String(S1));
-    const S3 = Math.abs(S1 - 2 * day);
+    const S3 = Math.abs(S1 - 2 * day); // ТЕТРАДНО!
     const S4 = sum(String(S3));
 
     const all = digits + S1 + S2 + S3 + S4;
     const c = count(all);
 
-    input.value = formatDate(raw); // красиво отформатируем
-
-    document.getElementById("outDate").textContent = input.value;
+    document.getElementById("outDate").textContent = v;
     document.getElementById("outExtra").textContent = `${S1}, ${S2}, ${S3}, ${S4}`;
     document.getElementById("outDestiny").textContent = destiny(digits);
 
@@ -60,16 +49,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     result.classList.remove("hidden");
 
+    // волна анимации
     document.querySelectorAll(".cell").forEach((cell,i)=>{
       cell.style.animation = "none";
-      cell.style.setProperty("--delay", `${i*45}ms`);
+      cell.style.setProperty("--delay", `${i*50}ms`);
       void cell.offsetHeight;
       cell.style.animation = "";
     });
-  }
-
-  function formatDate(s){
-    return `${s.slice(0,2)}.${s.slice(2,4)}.${s.slice(4,8)}`;
   }
 
   function sum(s){
