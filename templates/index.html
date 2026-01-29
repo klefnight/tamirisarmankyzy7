@@ -1,0 +1,195 @@
+diff --git a/templates/index.html b/templates/index.html
+index 432eb2a10631bcad7e272995d6718a51ba3c7184..cdf45e16e33960f4748e5acaaee43e9cedbd0dc0 100644
+--- a/templates/index.html
++++ b/templates/index.html
+@@ -1,57 +1,148 @@
+ <!DOCTYPE html>
+ <html lang="ru">
+ <head>
+     <meta charset="UTF-8">
+-    <title>Tamiris Armankyzy</title>
++    <meta name="viewport" content="width=device-width, initial-scale=1">
++    <title>Калькулятор квадрата Пифагора</title>
+     <link rel="stylesheet" href="/static/style.css">
+ </head>
+ <body>
++    <main class="page">
++        <header class="hero">
++            <p class="hero__eyebrow">Нумерология даты рождения</p>
++            <h1>Квадрат Пифагора</h1>
++            <p class="hero__subtitle">
++                Введите дату рождения, чтобы рассчитать квадрат, дополнительные числа и число судьбы с трактовками.
++            </p>
++        </header>
+ 
+-<h1>Квадрат Пифагора</h1>
++        <section class="calculator">
++            <form id="calculator-form" class="calculator__form">
++                <label class="field">
++                    <span>Дата рождения</span>
++                    <input type="text" id="birth-date" placeholder="ДД.ММ.ГГГГ" autocomplete="off">
++                </label>
++                <button type="submit">Рассчитать</button>
++                <p id="form-error" class="form-error" role="alert"></p>
++            </form>
++        </section>
+ 
+-<form method="post">
+-    <input type="text" name="birth_date" placeholder="ДД.ММ.ГГГГ" value="{{ birth_date }}">
+-    <button>Рассчитать</button>
+-</form>
++        <section id="results" class="results" aria-live="polite">
++            <div class="summary">
++                <div class="summary__card">
++                    <h2>Основные расчёты</h2>
++                    <p>Дата рождения: <strong id="summary-date">—</strong></p>
++                    <p>Число судьбы: <strong id="summary-destiny">—</strong></p>
++                    <p class="summary__desc" id="summary-destiny-desc">—</p>
++                </div>
+ 
+-{% if data %}
+-<div class="layout">
++                <div class="summary__card">
++                    <h2>Дополнительные числа</h2>
++                    <div class="extra-list">
++                        <div>
++                            <span>1-е число</span>
++                            <strong id="sum1">—</strong>
++                            <p id="sum1-desc">—</p>
++                        </div>
++                        <div>
++                            <span>2-е число</span>
++                            <strong id="sum2">—</strong>
++                            <p id="sum2-desc">—</p>
++                        </div>
++                        <div>
++                            <span>3-е число</span>
++                            <strong id="sum3">—</strong>
++                            <p id="sum3-desc">—</p>
++                        </div>
++                        <div>
++                            <span>4-е число</span>
++                            <strong id="sum4">—</strong>
++                            <p id="sum4-desc">—</p>
++                        </div>
++                    </div>
++                </div>
++            </div>
+ 
+-    <div class="grid">
+-        {% for num, title in {
+-            "1":"Характер","4":"Здоровье","7":"Удача",
+-            "2":"Энергия","5":"Логика","8":"Долг",
+-            "3":"Интерес","6":"Труд","9":"Память"
+-        }.items() %}
+-        <div class="cell">
+-            <strong>{{ title }}</strong><br>
+-            {{ data.matrix[num] or "—" }}
+-            <p class="desc">{{ data.descriptions[num] }}</p>
+-        </div>
+-        {% endfor %}
+-    </div>
++            <div class="layout">
++                <div class="grid">
++                    <div class="cell" data-number="1">
++                        <strong>Характер</strong>
++                        <div class="cell__value">—</div>
++                        <p class="desc"></p>
++                    </div>
++                    <div class="cell" data-number="4">
++                        <strong>Здоровье</strong>
++                        <div class="cell__value">—</div>
++                        <p class="desc"></p>
++                    </div>
++                    <div class="cell" data-number="7">
++                        <strong>Удача</strong>
++                        <div class="cell__value">—</div>
++                        <p class="desc"></p>
++                    </div>
++                    <div class="cell" data-number="2">
++                        <strong>Энергия</strong>
++                        <div class="cell__value">—</div>
++                        <p class="desc"></p>
++                    </div>
++                    <div class="cell" data-number="5">
++                        <strong>Логика</strong>
++                        <div class="cell__value">—</div>
++                        <p class="desc"></p>
++                    </div>
++                    <div class="cell" data-number="8">
++                        <strong>Долг</strong>
++                        <div class="cell__value">—</div>
++                        <p class="desc"></p>
++                    </div>
++                    <div class="cell" data-number="3">
++                        <strong>Интерес</strong>
++                        <div class="cell__value">—</div>
++                        <p class="desc"></p>
++                    </div>
++                    <div class="cell" data-number="6">
++                        <strong>Труд</strong>
++                        <div class="cell__value">—</div>
++                        <p class="desc"></p>
++                    </div>
++                    <div class="cell" data-number="9">
++                        <strong>Память</strong>
++                        <div class="cell__value">—</div>
++                        <p class="desc"></p>
++                    </div>
++                </div>
+ 
+-    <div class="side">
+-        <div>Темперамент<br><strong>{{ data.temperament }}</strong></div>
+-        <div>Цель<br><strong>{{ data.goal }}</strong></div>
+-        <div>Семья<br><strong>{{ data.family }}</strong></div>
+-        <div>Привычки<br><strong>{{ data.habits }}</strong></div>
+-        <div>Духовность<br><strong>{{ data.spirituality }}</strong></div>
+-    </div>
+-
+-</div>
+-
+-<div class="extra">
+-    <h2>Дополнительные числа</h2>
+-    <p>1-е: {{ data.sum1 }}</p>
+-    <p>2-е: {{ data.sum2 }}</p>
+-    <p>3-е: {{ data.sum3 }}</p>
+-    <p>4-е: {{ data.sum4 }}</p>
+-
+-    <h2>Число судьбы</h2>
+-    <div class="destiny">{{ data.destiny }}</div>
+-</div>
+-{% endif %}
++                <aside class="side">
++                    <div>
++                        <span>Темперамент</span>
++                        <strong id="temperament">—</strong>
++                        <p id="temperament-desc"></p>
++                    </div>
++                    <div>
++                        <span>Цель</span>
++                        <strong id="goal">—</strong>
++                        <p id="goal-desc"></p>
++                    </div>
++                    <div>
++                        <span>Семья</span>
++                        <strong id="family">—</strong>
++                        <p id="family-desc"></p>
++                    </div>
++                    <div>
++                        <span>Привычки</span>
++                        <strong id="habits">—</strong>
++                        <p id="habits-desc"></p>
++                    </div>
++                    <div>
++                        <span>Духовность</span>
++                        <strong id="spirituality">—</strong>
++                        <p id="spirituality-desc"></p>
++                    </div>
++                </aside>
++            </div>
++        </section>
++    </main>
+ 
++    <script src="/static/app.js"></script>
+ </body>
+ </html>
